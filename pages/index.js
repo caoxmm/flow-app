@@ -11,7 +11,7 @@ export default function Home() {
 
   // NEW
   const sendQuery = async () => {
-    const profile = await fcl.query({
+    const inited = await fcl.query({
       cadence: `
         import NonFungibleToken from 0xNON_FUNGIBLE_TOKEN_ADDRESS
         import MatrixWorldVoucher from 0xVOUCHER_ADDRESS
@@ -24,7 +24,7 @@ export default function Home() {
       args: (arg, t) => [arg(user.addr, t.Address)],
     });
 
-    setName(profile?.name ?? "No Profile");
+    console.log(inited);
   };
 
   const AuthedState = () => {
