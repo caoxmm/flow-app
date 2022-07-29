@@ -27,11 +27,33 @@ export default function Home() {
     console.log(inited);
   };
 
+  const excuteTransaction = async () => {
+    const transactionId = await fcl.mutate({
+      cadence: `
+      transaction {
+          prepare(signer: AuthAccount) {
+            signer.unlink(/public/MatrixWorldVoucherCollection)
+            let res <- signer.load<@AnyResource>(from: /storage/MatrixWorldVoucherCollection)
+            destroy res
+          }
+      }
+    `,
+      payer: fcl.authz,
+      proposer: fcl.authz,
+      authorizations: [fcl.authz],
+      limit: 100,
+    });
+
+    const transaction = await fcl.tx(transactionId).onceSealed();
+    console.log(transaction);
+  };
+
   const AuthedState = () => {
     return (
       <div>
         <div>Address: {user?.addr ?? "No Address"}</div>
-        <button onClick={sendQuery}>Check init</button> {/* NEW */}
+        <button onClick={sendQuery}>Check init</button>
+        <button onClick={excuteTransaction}>excute unlink</button>
         <button onClick={fcl.unauthenticate}>Log Out</button>
       </div>
     );
